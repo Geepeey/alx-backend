@@ -4,13 +4,21 @@ A method named get_page that takes two integer arguments
 page with default value 1 and page_size with default value 10.
 """
 import csv
-import math
-from typing import List
+from typing import List, Tuple
 
 
-def index_range(page: int, page_size: int) -> tuple:
-    """returns index range for items"""
-    return (((page - 1) * page_size), page * page_size)
+def index_range(page: int, page_size: int) -> Tuple[int, int]:
+    """Returns a tuple containing the start index and end index
+    corresponding to the range of indexes to return in a list
+    for those particular pagination parameters"""
+    start = 0
+    stop = 0
+
+    for i in range(1, page + 1):
+        if i == page:
+            start = page_size * (i - 1)
+            stop = start + page_size
+    return (start, stop)
 
 
 class Server:
@@ -33,12 +41,14 @@ class Server:
         return self.__dataset
 
     def get_page(self, page: int = 1, page_size: int = 10) -> List[List]:
-        """Returns a dataset for a given data range"""
+        """Gets the items in a page of the dataset"""
+        assert (type(page) is int and page > 0)
+        assert (type(page_size) is int and page_size > 0)
+        data = self.dataset()
+
         try:
-            assert (page > 0 or page_size > 0)
-            assert (type(page) is int or type(page_size) is int)
-            pages = index_range(page, page_size)
-            dataset = self.dataset()[pages[0]:pages[1]]
-            return dataset
-        except Exception:
+            p = index_range(page, page_size)[0]
+            size = index_range(page, page_size)[1]
+            return data[p: size]
+        except IndexError:
             return []
