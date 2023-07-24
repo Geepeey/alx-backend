@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """
-Deletion-resilient hypermedia pagination
+A get_hyper_index method with two integer arguments: index
+with a None default value and page_size with default value of 10
 """
 
 import csv
@@ -41,7 +42,7 @@ class Server:
 
     def get_hyper_index(self, index: int = None,
                         page_size: int = 10) -> Dict:
-        """ return all data"""
+        """Return a dict with all data"""
 
         if index is None:
             index = 0
